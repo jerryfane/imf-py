@@ -10,9 +10,10 @@ This project provides a Python client for interacting with the [IMF Data Service
    - [Basic Usage](#basic-usage)
    - [Advanced Usage (Data Downloader)](#advanced-usage-data-downloader)
 4. [How It Works](#how-it-works)
-5. [File Descriptions](#file-descriptions)
-6. [API Rate Limits](#api-rate-limits)
-7. [Troubleshooting](#troubleshooting)
+5. [IMFDataClient Class Methods](#imfdataclient-class-methods)
+6. [File Descriptions](#file-descriptions)
+7. [API Rate Limits](#api-rate-limits)
+8. [Troubleshooting](#troubleshooting)
 
 ## Overview
 
@@ -88,6 +89,32 @@ The script will download data in chunks and periodically save it to a CSV file.
    - Downloads data for each chunk and combines the results.
    - Periodically saves the downloaded data to a CSV file to prevent data loss in case of interruptions.
    - Uses a progress bar to show download progress.
+
+## IMFDataClient Class Methods
+
+The `IMFDataClient` class provides several methods for interacting with the IMF Data Services API:
+
+- `__init__()`: Initializes the client, setting up a session and caches for dataflows and data structures.
+
+- `_make_request(endpoint, params)`: Makes a rate-limited API request to the specified endpoint with optional parameters. It includes retry logic for failed requests.
+
+- `get_dataflow()`: Retrieves and caches the list of available dataflows (datasets) from the API.
+
+- `get_valid_ids()`: Returns a list of valid dataset IDs based on the cached dataflow information.
+
+- `validate_id(database_id)`: Checks if a given database ID is valid, raising a ValueError if it's not.
+
+- `get_data_structure(database_id)`: Retrieves and caches the data structure for a specific dataset.
+
+- `extract_dimension_names(data_structure)`: Extracts the dimension names from a dataset's structure.
+
+- `extract_dimension_values(data_structure, dimension_names)`: Extracts the possible values for each dimension in a dataset.
+
+- `load_dataset(database_id)`: Loads a dataset, returning a dictionary with the dataset's ID, dimensions, and a `get_series` function for data retrieval.
+
+- `list_datasets()`: Returns a pandas DataFrame listing all available datasets with their IDs and descriptions.
+
+The `get_series` function returned by `load_dataset` is the primary method for retrieving data. It accepts parameters for frequency, reference area, indicators, and time periods, constructs the appropriate query, makes the API request, and returns the data as a pandas DataFrame.
 
 ## File Descriptions
 
